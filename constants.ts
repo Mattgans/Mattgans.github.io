@@ -1,18 +1,16 @@
-import { ContactInfo, Education, Experience, Project, SkillCategory } from './types';
-
 export const NAME = "Matthew Shang";
 export const TITLE = "Aspiring Software Engineer & Researcher";
 export const ABOUT_ME = "A dedicated and results-oriented Computer Science and Statistics student at the University of Illinois. Passionate about leveraging machine learning and data science to solve complex problems, with hands-on experience in developing AI models and data processing pipelines. A collaborative team player with a strong foundation in software engineering principles and a drive for continuous learning and innovation.";
 
 
-export const CONTACT_INFO: ContactInfo = {
+export const CONTACT_INFO = {
   phone: "217-530-7875",
   email: "Mshang4@illinois.edu",
   linkedin: "https://linkedin.com/in/shangmatthew",
   github: "https://github.com/shangmatthew"
 };
 
-export const EDUCATION_INFO: Education = {
+export const EDUCATION_INFO = {
   institution: "University of Illinois, Urbana-Champaign",
   degree: "Bachelor of Liberal Arts and Sciences in Computer Science and Statistics",
   graduation: "Expected Graduation May 2026",
@@ -24,7 +22,7 @@ export const EDUCATION_INFO: Education = {
   ]
 };
 
-export const EXPERIENCE_INFO: Experience[] = [
+export const EXPERIENCE_INFO = [
   {
     role: "Machine Learning & Bio-statistics Research Intern",
     company: "University of Illinois, Urbana-Champaign",
@@ -69,7 +67,7 @@ export const EXPERIENCE_INFO: Experience[] = [
   }
 ];
 
-export const PROJECTS_INFO: Project[] = [
+export const PROJECTS_INFO = [
   {
     name: '"Algophony" AI Music Generation',
     technologies: ["Deep Learning", "Generative AI", "CVAE", "CNN", "PyTorch"],
@@ -99,7 +97,7 @@ export const PROJECTS_INFO: Project[] = [
   }
 ];
 
-export const SKILLS_INFO: SkillCategory[] = [
+export const SKILLS_INFO = [
   {
     title: "Coding Languages",
     skills: ["Java", "Python", "C/C++", "SQL (Postgres)", "R", "MATLAB", "SAS"]

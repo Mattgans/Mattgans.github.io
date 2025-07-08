@@ -1,11 +1,6 @@
 import React from 'react';
 
-interface IconProps {
-  name: 'phone' | 'email' | 'linkedin' | 'github' | 'arrow-up-right';
-  className?: string;
-}
-
-export const Icon: React.FC<IconProps> = ({ name, className }) => {
+export const Icon = ({ name, className }) => {
   switch (name) {
     case 'phone':
       return (

@@ -1,9 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { ABOUT_ME, CONTACT_INFO, EDUCATION_INFO, EXPERIENCE_INFO, NAME, PROJECTS_INFO, SKILLS_INFO, TITLE } from './constants';
-import { Experience, Project, SkillCategory } from './types';
-import { ProjectCard } from './components/ProjectCard';
-import { SkillBadge } from './components/SkillBadge';
-import { Icon } from './components/Icon';
+import { ABOUT_ME, CONTACT_INFO, EDUCATION_INFO, EXPERIENCE_INFO, NAME, PROJECTS_INFO, SKILLS_INFO, TITLE } from './constants.js';
+import { ProjectCard } from './components/ProjectCard.js';
+import { SkillBadge } from './components/SkillBadge.js';
+import { Icon } from './components/Icon.js';
 
 const SECTIONS = [
   { id: 'about', title: 'About' },
@@ -12,9 +11,9 @@ const SECTIONS = [
   { id: 'skills', title: 'Skills' },
 ];
 
-const App: React.FC = () => {
+const App = () => {
   const [activeSection, setActiveSection] = useState('about');
-  const observer = useRef<IntersectionObserver | null>(null);
+  const observer = useRef(null);
 
   useEffect(() => {
     observer.current = new IntersectionObserver((entries) => {
@@ -36,7 +35,7 @@ const App: React.FC = () => {
     };
   }, []);
 
-  const NavLink: React.FC<{ id: string, title: string }> = ({ id, title }) => (
+  const NavLink = ({ id, title }) => (
     <li>
       <a href={`#${id}`} className="group flex items-center py-3">
         <span className={`nav-indicator mr-4 h-px w-8 bg-slate-500 transition-all group-hover:w-16 group-hover:bg-slate-200 ${activeSection === id ? 'w-16 bg-slate-200' : ''}`}></span>
@@ -45,7 +44,7 @@ const App: React.FC = () => {
     </li>
   );
   
-  const ExperienceCard: React.FC<{ experience: Experience }> = ({ experience }) => (
+  const ExperienceCard = ({ experience }) => (
     <div className="group relative grid pb-1 transition-all sm:grid-cols-8 sm:gap-8 md:gap-4 lg:hover:!opacity-100 lg:group-hover/list:opacity-50">
       <div className="absolute -inset-x-4 -inset-y-4 z-0 hidden rounded-md transition motion-reduce:transition-none lg:block lg:group-hover:bg-slate-800/50 lg:group-hover:shadow-[inset_0_1px_0_0_rgba(148,163,184,0.1)] lg:group-hover:drop-shadow-lg"></div>
       <header className="z-10 mb-2 mt-1 text-xs font-semibold uppercase tracking-wide text-slate-500 sm:col-span-2" aria-label={experience.dates}>
