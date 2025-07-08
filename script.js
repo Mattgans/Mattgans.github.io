@@ -99,7 +99,7 @@ document.addEventListener("DOMContentLoaded", () => {
 })
 
 // Typing effect for hero title (optional enhancement)
-function typeWriter(element, text, speed = 100) {
+function typeWriterHeroTitle(element, text, speed = 100) {
   let i = 0
   element.innerHTML = ""
 
@@ -192,3 +192,239 @@ if ("performance" in window) {
     }, 0)
   })
 }
+
+// Scroll progress indicator
+const scrollProgress = document.getElementById("scroll-progress")
+
+function updateScrollProgress() {
+  const scrollTop = window.pageYOffset
+  const docHeight = document.documentElement.scrollHeight - window.innerHeight
+  const scrollPercent = (scrollTop / docHeight) * 100
+  scrollProgress.style.width = scrollPercent + "%"
+}
+
+window.addEventListener("scroll", updateScrollProgress)
+
+// Typing effect for hero name
+function typeWriterHeroName(element, text, speed = 150) {
+  element.classList.remove("typing-cursor")
+  element.innerHTML = ""
+  let i = 0
+
+  function type() {
+    if (i < text.length) {
+      element.innerHTML += text.charAt(i)
+      i++
+      setTimeout(type, speed)
+    } else {
+      element.classList.add("typing-cursor")
+    }
+  }
+
+  type()
+}
+
+// Initialize typing effect
+window.addEventListener("load", () => {
+  const typingElement = document.getElementById("typing-name")
+  if (typingElement) {
+    setTimeout(() => {
+      typeWriterHeroName(typingElement, "Matthew Shang", 100)
+    }, 1000)
+  }
+})
+
+// Enhanced intersection observer for stagger animations
+const staggerObserver = new IntersectionObserver(
+  (entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("animate")
+      }
+    })
+  },
+  {
+    threshold: 0.1,
+    rootMargin: "0px 0px -50px 0px",
+  },
+)
+
+// Observe stagger elements
+document.addEventListener("DOMContentLoaded", () => {
+  const staggerElements = document.querySelectorAll(".stagger-animation")
+  staggerElements.forEach((el) => staggerObserver.observe(el))
+})
+
+// Section title animation observer
+const titleObserver = new IntersectionObserver(
+  (entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("animate")
+      }
+    })
+  },
+  {
+    threshold: 0.5,
+  },
+)
+
+document.querySelectorAll(".section-title").forEach((title) => {
+  titleObserver.observe(title)
+})
+
+// Enhanced project card interactions
+document.querySelectorAll(".project-card").forEach((card) => {
+  card.addEventListener("mouseenter", () => {
+    card.style.transform = "translateY(-10px) rotateX(5deg) scale(1.02)"
+  })
+
+  card.addEventListener("mouseleave", () => {
+    card.style.transform = "translateY(0) rotateX(0) scale(1)"
+  })
+})
+
+// Parallax effect for hero section
+window.addEventListener("scroll", () => {
+  const scrolled = window.pageYOffset
+  const hero = document.querySelector(".hero")
+  const particles = document.querySelectorAll(".particle")
+
+  if (hero) {
+    hero.style.transform = `translateY(${scrolled * 0.5}px)`
+  }
+
+  particles.forEach((particle, index) => {
+    const speed = (index + 1) * 0.1
+    particle.style.transform = `translateY(${scrolled * speed}px)`
+  })
+})
+
+// Dynamic skill tag animations
+document.querySelectorAll(".skill-tag").forEach((tag, index) => {
+  tag.addEventListener("mouseenter", () => {
+    // Add ripple effect
+    const ripple = document.createElement("span")
+    ripple.style.position = "absolute"
+    ripple.style.borderRadius = "50%"
+    ripple.style.background = "rgba(59, 130, 246, 0.6)"
+    ripple.style.transform = "scale(0)"
+    ripple.style.animation = "ripple 0.6s linear"
+    ripple.style.left = "50%"
+    ripple.style.top = "50%"
+    ripple.style.width = "20px"
+    ripple.style.height = "20px"
+    ripple.style.marginLeft = "-10px"
+    ripple.style.marginTop = "-10px"
+
+    tag.appendChild(ripple)
+
+    setTimeout(() => {
+      ripple.remove()
+    }, 600)
+  })
+})
+
+// Add ripple animation CSS
+const rippleStyle = document.createElement("style")
+rippleStyle.textContent = `
+  @keyframes ripple {
+    to {
+      transform: scale(4);
+      opacity: 0;
+    }
+  }
+`
+document.head.appendChild(rippleStyle)
+
+// Enhanced contact method interactions
+document.querySelectorAll(".contact-method").forEach((method) => {
+  method.addEventListener("mouseenter", (e) => {
+    const rect = method.getBoundingClientRect()
+    const x = e.clientX - rect.left
+    const y = e.clientY - rect.top
+
+    const ripple = method.querySelector("::before")
+    method.style.setProperty("--x", x + "px")
+    method.style.setProperty("--y", y + "px")
+  })
+})
+
+// Smooth reveal animations for timeline items
+const timelineObserver = new IntersectionObserver(
+  (entries) => {
+    entries.forEach((entry, index) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => {
+          entry.target.style.opacity = "1"
+          entry.target.style.transform = "translateX(0)"
+        }, index * 200)
+      }
+    })
+  },
+  { threshold: 0.3 },
+)
+
+document.querySelectorAll(".timeline-item").forEach((item, index) => {
+  item.style.opacity = "0"
+  item.style.transform = index % 2 === 0 ? "translateX(-50px)" : "translateX(50px)"
+  item.style.transition = "all 0.6s ease"
+  timelineObserver.observe(item)
+})
+
+// Dynamic navbar background based on scroll position
+let lastScrollY = window.scrollY
+window.addEventListener("scroll", () => {
+  const currentScrollY = window.scrollY
+  const navbar = document.getElementById("navbar")
+
+  if (currentScrollY > lastScrollY && currentScrollY > 100) {
+    navbar.style.transform = "translateY(-100%)"
+  } else {
+    navbar.style.transform = "translateY(0)"
+  }
+
+  lastScrollY = currentScrollY
+})
+
+// Add floating animation to achievement badges
+document.querySelectorAll(".achievement-badge").forEach((badge, index) => {
+  badge.style.animation = `float 3s ease-in-out infinite ${index * 0.5}s`
+})
+
+// Enhanced mobile menu with slide animation
+const mobileMenuToggle = () => {
+  const navMenu = document.getElementById("nav-menu")
+  const hamburger = document.getElementById("hamburger")
+
+  navMenu.style.transition = "transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)"
+
+  if (navMenu.classList.contains("active")) {
+    navMenu.style.transform = "translateX(0)"
+  } else {
+    navMenu.style.transform = "translateX(-100%)"
+  }
+}
+
+// Performance optimized scroll handler
+let scrollTimeout
+window.addEventListener("scroll", () => {
+  if (scrollTimeout) {
+    clearTimeout(scrollTimeout)
+  }
+
+  scrollTimeout = setTimeout(() => {
+    updateScrollProgress()
+    updateActiveNavLink()
+  }, 10)
+})
+
+// Add loading animation
+window.addEventListener("load", () => {
+  document.body.style.opacity = "0"
+  document.body.style.transition = "opacity 0.5s ease"
+
+  setTimeout(() => {
+    document.body.style.opacity = "1"
+  }, 100)
+})

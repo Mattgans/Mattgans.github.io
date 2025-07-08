@@ -11,6 +11,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
+    <div class="scroll-progress" id="scroll-progress"></div>
     <!-- Navigation -->
     <nav class="navbar" id="navbar">
         <div class="nav-container">
@@ -45,10 +46,21 @@
 
     <!-- Hero Section -->
     <section id="home" class="hero">
+        <div class="particles">
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+        </div>
         <div class="hero-container">
             <div class="hero-content">
                 <h1 class="hero-title">
-                    Hi, I'm <span class="highlight">Matthew Shang</span>
+                    Hi, I'm <span class="highlight glow-text typing-cursor" id="typing-name">Matthew Shang</span>
                 </h1>
                 <p class="hero-subtitle">Computer Science & Statistics Student</p>
                 <p class="hero-description">
@@ -160,7 +172,7 @@
         <div class="container">
             <h2 class="section-title">Featured Projects</h2>
             <div class="projects-grid">
-                <div class="project-card">
+                <div class="project-card stagger-animation">
                     <div class="project-header">
                         <h3>Algophony - AI Music Generation</h3>
                         <div class="project-tags">
@@ -183,7 +195,7 @@
                     </div>
                 </div>
                 
-                <div class="project-card">
+                <div class="project-card stagger-animation">
                     <div class="project-header">
                         <h3>The Daily Prophet - AI Stock Trading Bot</h3>
                         <div class="project-tags">
@@ -206,7 +218,7 @@
                     </div>
                 </div>
                 
-                <div class="project-card">
+                <div class="project-card stagger-animation">
                     <div class="project-header">
                         <h3>Credit Utilization Prediction Model</h3>
                         <div class="project-tags">
@@ -237,7 +249,7 @@
         <div class="container">
             <h2 class="section-title">Technical Skills</h2>
             <div class="skills-grid">
-                <div class="skill-category">
+                <div class="skill-category stagger-animation">
                     <h3>Programming Languages</h3>
                     <div class="skill-tags">
                         <span class="skill-tag">Java</span>
@@ -250,7 +262,7 @@
                     </div>
                 </div>
                 
-                <div class="skill-category">
+                <div class="skill-category stagger-animation">
                     <h3>Developer Tools</h3>
                     <div class="skill-tags">
                         <span class="skill-tag">Git</span>
@@ -263,7 +275,7 @@
                     </div>
                 </div>
                 
-                <div class="skill-category">
+                <div class="skill-category stagger-animation">
                     <h3>Machine Learning & Data Science</h3>
                     <div class="skill-tags">
                         <span class="skill-tag">PyTorch</span>
@@ -276,7 +288,7 @@
                     </div>
                 </div>
                 
-                <div class="skill-category">
+                <div class="skill-category stagger-animation">
                     <h3>Languages</h3>
                     <div class="skill-tags">
                         <span class="skill-tag">English (Fluent)</span>
