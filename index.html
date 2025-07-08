@@ -1,39 +1,340 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Matthew Shang | Portfolio</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Matthew Shang - Computer Science and Statistics Student at University of Illinois, Urbana-Champaign">
+    <title>Matthew Shang - Portfolio</title>
+    <link rel="stylesheet" href="styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            fontFamily: {
-              'serif': ['"EB Garamond"', 'serif'],
-              'sans': ['"Inter"', 'sans-serif'],
-            }
-          }
-        }
-      }
-    </script>
-  <script type="importmap">
-{
-  "imports": {
-    "react-dom/": "https://esm.sh/react-dom@^19.1.0/",
-    "react/": "https://esm.sh/react@^19.1.0/",
-    "react": "https://esm.sh/react@^19.1.0"
-  }
-}
-</script>
-<link rel="stylesheet" href="/index.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
-  <body class="bg-slate-900 font-sans text-slate-300">
-    <div id="root"></div>
-    <script type="module" src="./index.js"></script>
-  <script type="module" src="/index.tsx"></script>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <a href="#home" class="nav-logo">MS</a>
+            <ul class="nav-menu" id="nav-menu">
+                <li class="nav-item">
+                    <a href="#home" class="nav-link">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#about" class="nav-link">About</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#experience" class="nav-link">Experience</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#projects" class="nav-link">Projects</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#skills" class="nav-link">Skills</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#contact" class="nav-link">Contact</a>
+                </li>
+            </ul>
+            <div class="hamburger" id="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-container">
+            <div class="hero-content">
+                <h1 class="hero-title">
+                    Hi, I'm <span class="highlight">Matthew Shang</span>
+                </h1>
+                <p class="hero-subtitle">Computer Science & Statistics Student</p>
+                <p class="hero-description">
+                    Passionate about machine learning, data science, and building innovative solutions. 
+                    Currently pursuing my Bachelor's at the University of Illinois, Urbana-Champaign.
+                </p>
+                <div class="hero-buttons">
+                    <a href="#projects" class="btn btn-primary">View My Work</a>
+                    <a href="#contact" class="btn btn-secondary">Get In Touch</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about">
+        <div class="container">
+            <h2 class="section-title">About Me</h2>
+            <div class="about-content">
+                <div class="about-text">
+                    <p>
+                        I'm a dedicated Computer Science and Statistics student at the University of Illinois, 
+                        Urbana-Champaign, maintaining a perfect 4.0 GPA and recognized as a Dean's List Award Recipient.
+                    </p>
+                    <p>
+                        My passion lies in the intersection of machine learning, data science, and software development. 
+                        I have hands-on experience in research, teaching, and building innovative projects that solve real-world problems.
+                    </p>
+                </div>
+                <div class="education-card">
+                    <h3>Education</h3>
+                    <div class="education-item">
+                        <h4>University of Illinois, Urbana-Champaign</h4>
+                        <p class="degree">Bachelor of Liberal Arts and Sciences</p>
+                        <p class="major">Computer Science and Statistics</p>
+                        <p class="gpa">GPA: 4.0/4.0</p>
+                        <p class="graduation">Expected Graduation: May 2026</p>
+                        <div class="achievements">
+                            <span class="achievement-badge">Dean's List Award Recipient</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Experience Section -->
+    <section id="experience" class="experience">
+        <div class="container">
+            <h2 class="section-title">Experience</h2>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <h3>Machine Learning & Bio-statistics Research Intern</h3>
+                        <p class="company">University of Illinois, Urbana-Champaign</p>
+                        <p class="period">Aug 2024 – Present</p>
+                        <ul>
+                            <li>Utilized novel Vision Transformer-based models for Hyperspectral Unmixing applications, improving accuracy and efficiency</li>
+                            <li>Implemented convolutional neural networks for biomarker detection using PyTorch, collaborating with chemists and imaging experts</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <h3>Statistics Course Assistant</h3>
+                        <p class="company">University of Illinois, Urbana-Champaign</p>
+                        <p class="period">Feb 2024 – Present</p>
+                        <ul>
+                            <li>Lead weekly discussion sections, teaching key statistical concepts and mathematical proofs to over 30 students</li>
+                            <li>Provide individualized guidance during office hours and develop course content including exams and homework assignments</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <h3>CS 128 Course Assistant</h3>
+                        <p class="company">University of Illinois, Urbana-Champaign</p>
+                        <p class="period">Dec 2023 – Aug 2024</p>
+                        <ul>
+                            <li>Led office hours and discussion sections, simplifying complex topics like data structures for students</li>
+                            <li>Guided students on coding projects, assisting with algorithm implementation and debugging in C++</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <h3>Data Science Research Intern</h3>
+                        <p class="company">University of British Columbia</p>
+                        <p class="period">Jul 2022 – Oct 2023</p>
+                        <ul>
+                            <li>Located over 1,000,000 Metric tonnes of unreported freshwater fishery catches through extensive literature review</li>
+                            <li>Generated databases and implemented time-series analysis statistical methods to model freshwater catches from 1950-present</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects" class="projects">
+        <div class="container">
+            <h2 class="section-title">Featured Projects</h2>
+            <div class="projects-grid">
+                <div class="project-card">
+                    <div class="project-header">
+                        <h3>Algophony - AI Music Generation</h3>
+                        <div class="project-tags">
+                            <span class="tag">Deep Learning</span>
+                            <span class="tag">PyTorch</span>
+                            <span class="tag">CVAE</span>
+                            <span class="tag">CNN</span>
+                        </div>
+                    </div>
+                    <p class="project-description">
+                        Trained deep learning models (CVAE, GAN) in PyTorch on a 500GB+ audio dataset to generate novel musical compositions. 
+                        Engineered a parallelized data processing pipeline that reduced computation time by 85%.
+                    </p>
+                    <div class="project-highlights">
+                        <ul>
+                            <li>Led a team of 4 developers</li>
+                            <li>85% reduction in computation time</li>
+                            <li>500GB+ audio dataset processing</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="project-card">
+                    <div class="project-header">
+                        <h3>The Daily Prophet - AI Stock Trading Bot</h3>
+                        <div class="project-tags">
+                            <span class="tag">Python</span>
+                            <span class="tag">Google Gemini</span>
+                            <span class="tag">Alpaca API</span>
+                            <span class="tag">NewsAPI</span>
+                        </div>
+                    </div>
+                    <p class="project-description">
+                        Developed a full-stack application that automates stock trading by analyzing real-time news with Google's Gemini AI 
+                        for sentiment analysis and investment recommendations.
+                    </p>
+                    <div class="project-highlights">
+                        <ul>
+                            <li>Real-time news sentiment analysis</li>
+                            <li>Automated paper trading execution</li>
+                            <li>Web interface for results display</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="project-card">
+                    <div class="project-header">
+                        <h3>Credit Utilization Prediction Model</h3>
+                        <div class="project-tags">
+                            <span class="tag">Python</span>
+                            <span class="tag">Random Forest</span>
+                            <span class="tag">XGBoost</span>
+                            <span class="tag">R</span>
+                        </div>
+                    </div>
+                    <p class="project-description">
+                        Developed a forecasting model using Random Forest and XGBoost to predict credit card utilization, 
+                        achieving 90% accuracy for a 3-month forecast.
+                    </p>
+                    <div class="project-highlights">
+                        <ul>
+                            <li>90% prediction accuracy</li>
+                            <li>Automated end-to-end pipeline</li>
+                            <li>Optimized for MAE/RMSE</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Skills Section -->
+    <section id="skills" class="skills">
+        <div class="container">
+            <h2 class="section-title">Technical Skills</h2>
+            <div class="skills-grid">
+                <div class="skill-category">
+                    <h3>Programming Languages</h3>
+                    <div class="skill-tags">
+                        <span class="skill-tag">Java</span>
+                        <span class="skill-tag">Python</span>
+                        <span class="skill-tag">C/C++</span>
+                        <span class="skill-tag">SQL (Postgres)</span>
+                        <span class="skill-tag">R</span>
+                        <span class="skill-tag">MATLAB</span>
+                        <span class="skill-tag">SAS</span>
+                    </div>
+                </div>
+                
+                <div class="skill-category">
+                    <h3>Developer Tools</h3>
+                    <div class="skill-tags">
+                        <span class="skill-tag">Git</span>
+                        <span class="skill-tag">Docker</span>
+                        <span class="skill-tag">Google Cloud Platform</span>
+                        <span class="skill-tag">VS Code</span>
+                        <span class="skill-tag">Visual Studio</span>
+                        <span class="skill-tag">Eclipse</span>
+                        <span class="skill-tag">Thonny</span>
+                    </div>
+                </div>
+                
+                <div class="skill-category">
+                    <h3>Machine Learning & Data Science</h3>
+                    <div class="skill-tags">
+                        <span class="skill-tag">PyTorch</span>
+                        <span class="skill-tag">TensorFlow</span>
+                        <span class="skill-tag">Pandas</span>
+                        <span class="skill-tag">NumPy</span>
+                        <span class="skill-tag">Scikit-learn</span>
+                        <span class="skill-tag">XGBoost</span>
+                        <span class="skill-tag">Random Forest</span>
+                    </div>
+                </div>
+                
+                <div class="skill-category">
+                    <h3>Languages</h3>
+                    <div class="skill-tags">
+                        <span class="skill-tag">English (Fluent)</span>
+                        <span class="skill-tag">Mandarin Chinese (Fluent)</span>
+                        <span class="skill-tag">Shanghainese (Intermediate)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact">
+        <div class="container">
+            <h2 class="section-title">Get In Touch</h2>
+            <div class="contact-content">
+                <div class="contact-info">
+                    <p class="contact-description">
+                        I'm always interested in new opportunities and collaborations. 
+                        Feel free to reach out if you'd like to discuss projects, research, or just connect!
+                    </p>
+                    <div class="contact-methods">
+                        <a href="mailto:Mshang4@illinois.edu" class="contact-method">
+                            <div class="contact-icon">📧</div>
+                            <div class="contact-details">
+                                <h4>Email</h4>
+                                <p>Mshang4@illinois.edu</p>
+                            </div>
+                        </a>
+                        
+                        <a href="tel:217-530-7875" class="contact-method">
+                            <div class="contact-icon">📱</div>
+                            <div class="contact-details">
+                                <h4>Phone</h4>
+                                <p>217-530-7875</p>
+                            </div>
+                        </a>
+                        
+                        <a href="https://linkedin.com/in/shangmatthew" target="_blank" rel="noopener noreferrer" class="contact-method">
+                            <div class="contact-icon">💼</div>
+                            <div class="contact-details">
+                                <h4>LinkedIn</h4>
+                                <p>linkedin.com/in/shangmatthew</p>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Matthew Shang. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
 </body>
 </html>
