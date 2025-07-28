@@ -15,34 +15,51 @@ document.querySelectorAll(".nav-link").forEach((link) => {
   })
 })
 
-// Navbar scroll effect
-const navbar = document.getElementById("navbar")
+// Optimized scroll handler with throttling
+let isScrolling = false
 let lastScrollTop = 0
 
-window.addEventListener("scroll", () => {
-  const scrollTop = window.pageYOffset || document.documentElement.scrollTop
+function handleScroll() {
+  if (!isScrolling) {
+    window.requestAnimationFrame(() => {
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop
+      const navbar = document.getElementById("navbar")
+      
+      // Navbar scroll effect
+      if (scrollTop > 100) {
+        navbar.classList.add("scrolled")
+      } else {
+        navbar.classList.remove("scrolled")
+      }
 
-  if (scrollTop > 100) {
-    navbar.classList.add("scrolled")
-  } else {
-    navbar.classList.remove("scrolled")
+      // Update scroll progress
+      updateScrollProgress()
+      
+      // Update active nav link
+      updateActiveNavLink()
+      
+      lastScrollTop = scrollTop
+      isScrolling = false
+    })
+    isScrolling = true
   }
+}
 
-  lastScrollTop = scrollTop
-})
+window.addEventListener("scroll", handleScroll, { passive: true })
 
-// Active navigation link highlighting
+// Active navigation link highlighting - Fixed offset calculation
 const sections = document.querySelectorAll("section")
 const navLinks = document.querySelectorAll(".nav-link")
 
 function updateActiveNavLink() {
   let current = ""
+  const navbarHeight = document.getElementById("navbar").offsetHeight
 
   sections.forEach((section) => {
-    const sectionTop = section.offsetTop
-    const sectionHeight = section.clientHeight
+    const sectionTop = section.offsetTop - navbarHeight - 100 // Increased offset
+    const sectionBottom = sectionTop + section.offsetHeight
 
-    if (window.pageYOffset >= sectionTop - 200) {
+    if (window.pageYOffset >= sectionTop && window.pageYOffset < sectionBottom) {
       current = section.getAttribute("id")
     }
   })
@@ -55,17 +72,17 @@ function updateActiveNavLink() {
   })
 }
 
-window.addEventListener("scroll", updateActiveNavLink)
-window.addEventListener("load", updateActiveNavLink)
-
-// Smooth scrolling for navigation links
+// Fixed smooth scrolling for navigation links - MAIN FIX HERE
 document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
   anchor.addEventListener("click", function (e) {
     e.preventDefault()
-    const target = document.querySelector(this.getAttribute("href"))
+    const targetId = this.getAttribute("href").substring(1)
+    const target = document.getElementById(targetId)
 
     if (target) {
-      const offsetTop = target.offsetTop - 80 // Account for fixed navbar
+      const navbarHeight = document.getElementById("navbar").offsetHeight
+      // Increased offset to ensure content is not hidden behind navbar
+      const offsetTop = target.offsetTop - navbarHeight - 50 // Increased from 20 to 50
 
       window.scrollTo({
         top: offsetTop,
@@ -75,7 +92,7 @@ document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
   })
 })
 
-// Intersection Observer for animations
+// Intersection Observer for animations - Optimized
 const observerOptions = {
   threshold: 0.1,
   rootMargin: "0px 0px -50px 0px",
@@ -85,6 +102,8 @@ const observer = new IntersectionObserver((entries) => {
   entries.forEach((entry) => {
     if (entry.isIntersecting) {
       entry.target.classList.add("fade-in-up")
+      // Stop observing once animated to improve performance
+      observer.unobserve(entry.target)
     }
   })
 }, observerOptions)
@@ -92,41 +111,9 @@ const observer = new IntersectionObserver((entries) => {
 // Observe elements for animation
 document.addEventListener("DOMContentLoaded", () => {
   const animatedElements = document.querySelectorAll(".project-card, .skill-category, .timeline-item, .education-card")
-
   animatedElements.forEach((el) => {
     observer.observe(el)
   })
-})
-
-// Typing effect for hero title (optional enhancement)
-function typeWriterHeroTitle(element, text, speed = 100) {
-  let i = 0
-  element.innerHTML = ""
-
-  function type() {
-    if (i < text.length) {
-      element.innerHTML += text.charAt(i)
-      i++
-      setTimeout(type, speed)
-    }
-  }
-
-  type()
-}
-
-// Enhanced scroll performance
-let ticking = false
-
-function updateScrollEffects() {
-  updateActiveNavLink()
-  ticking = false
-}
-
-window.addEventListener("scroll", () => {
-  if (!ticking) {
-    requestAnimationFrame(updateScrollEffects)
-    ticking = true
-  }
 })
 
 // Keyboard navigation support
@@ -137,76 +124,29 @@ document.addEventListener("keydown", (e) => {
   }
 })
 
-// Contact method click tracking (for analytics if needed)
+// Contact method click tracking
 document.querySelectorAll(".contact-method").forEach((method) => {
   method.addEventListener("click", (e) => {
     const contactType = e.currentTarget.querySelector("h4").textContent
     console.log(`Contact method clicked: ${contactType}`)
-    // Add analytics tracking here if needed
   })
 })
 
-// Preload critical resources
-function preloadResources() {
-  const criticalImages = [
-    // Add any critical images here
-  ]
-
-  criticalImages.forEach((src) => {
-    const link = document.createElement("link")
-    link.rel = "preload"
-    link.as = "image"
-    link.href = src
-    document.head.appendChild(link)
-  })
-}
-
-// Initialize on DOM content loaded
-document.addEventListener("DOMContentLoaded", () => {
-  preloadResources()
-
-  // Add loading class removal after page load
-  window.addEventListener("load", () => {
-    document.body.classList.add("loaded")
-  })
-})
-
-// Error handling for external links
-document.querySelectorAll('a[target="_blank"]').forEach((link) => {
-  link.addEventListener("click", (e) => {
-    try {
-      // Add any external link tracking here
-      console.log(`External link clicked: ${link.href}`)
-    } catch (error) {
-      console.error("Error tracking external link:", error)
-    }
-  })
-})
-
-// Performance monitoring
-if ("performance" in window) {
-  window.addEventListener("load", () => {
-    setTimeout(() => {
-      const perfData = performance.getEntriesByType("navigation")[0]
-      console.log("Page load time:", perfData.loadEventEnd - perfData.loadEventStart, "ms")
-    }, 0)
-  })
-}
-
-// Scroll progress indicator
-const scrollProgress = document.getElementById("scroll-progress")
-
+// Scroll progress indicator - Fixed calculation
 function updateScrollProgress() {
-  const scrollTop = window.pageYOffset
-  const docHeight = document.documentElement.scrollHeight - window.innerHeight
-  const scrollPercent = (scrollTop / docHeight) * 100
-  scrollProgress.style.width = scrollPercent + "%"
+  const scrollProgress = document.getElementById("scroll-progress")
+  if (scrollProgress) {
+    const scrollTop = window.pageYOffset
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight
+    const scrollPercent = Math.min((scrollTop / docHeight) * 100, 100)
+    scrollProgress.style.width = scrollPercent + "%"
+  }
 }
 
-window.addEventListener("scroll", updateScrollProgress)
-
-// Typing effect for hero name
+// Typing effect for hero name - Improved
 function typeWriterHeroName(element, text, speed = 150) {
+  if (!element) return
+  
   element.classList.remove("typing-cursor")
   element.innerHTML = ""
   let i = 0
@@ -240,6 +180,7 @@ const staggerObserver = new IntersectionObserver(
     entries.forEach((entry) => {
       if (entry.isIntersecting) {
         entry.target.classList.add("animate")
+        staggerObserver.unobserve(entry.target)
       }
     })
   },
@@ -249,18 +190,13 @@ const staggerObserver = new IntersectionObserver(
   },
 )
 
-// Observe stagger elements
-document.addEventListener("DOMContentLoaded", () => {
-  const staggerElements = document.querySelectorAll(".stagger-animation")
-  staggerElements.forEach((el) => staggerObserver.observe(el))
-})
-
 // Section title animation observer
 const titleObserver = new IntersectionObserver(
   (entries) => {
     entries.forEach((entry) => {
       if (entry.isIntersecting) {
         entry.target.classList.add("animate")
+        titleObserver.unobserve(entry.target)
       }
     })
   },
@@ -269,42 +205,73 @@ const titleObserver = new IntersectionObserver(
   },
 )
 
-document.querySelectorAll(".section-title").forEach((title) => {
-  titleObserver.observe(title)
+// Initialize observers on DOM load
+document.addEventListener("DOMContentLoaded", () => {
+  // Observe stagger elements
+  const staggerElements = document.querySelectorAll(".stagger-animation")
+  staggerElements.forEach((el) => staggerObserver.observe(el))
+
+  // Observe section titles
+  document.querySelectorAll(".section-title").forEach((title) => {
+    titleObserver.observe(title)
+  })
 })
 
-// Enhanced project card interactions
+// Enhanced project card interactions - Throttled
+let cardAnimationFrame
 document.querySelectorAll(".project-card").forEach((card) => {
   card.addEventListener("mouseenter", () => {
-    card.style.transform = "translateY(-10px) rotateX(5deg) scale(1.02)"
+    if (cardAnimationFrame) cancelAnimationFrame(cardAnimationFrame)
+    cardAnimationFrame = requestAnimationFrame(() => {
+      card.style.transform = "translateY(-10px) rotateX(5deg) scale(1.02)"
+    })
   })
 
   card.addEventListener("mouseleave", () => {
-    card.style.transform = "translateY(0) rotateX(0) scale(1)"
+    if (cardAnimationFrame) cancelAnimationFrame(cardAnimationFrame)
+    cardAnimationFrame = requestAnimationFrame(() => {
+      card.style.transform = "translateY(0) rotateX(0) scale(1)"
+    })
   })
 })
 
-// Parallax effect for hero section
-window.addEventListener("scroll", () => {
-  const scrolled = window.pageYOffset
-  const hero = document.querySelector(".hero")
-  const particles = document.querySelectorAll(".particle")
+// Optimized parallax effect - Throttled
+let parallaxFrame
+function handleParallax() {
+  if (!parallaxFrame) {
+    parallaxFrame = requestAnimationFrame(() => {
+      const scrolled = window.pageYOffset
+      const hero = document.querySelector(".hero")
+      const particles = document.querySelectorAll(".particle")
 
-  if (hero) {
-    hero.style.transform = `translateY(${scrolled * 0.5}px)`
+      if (hero && scrolled < window.innerHeight) {
+        hero.style.transform = `translateY(${scrolled * 0.3}px)`
+      }
+
+      particles.forEach((particle, index) => {
+        if (scrolled < window.innerHeight) {
+          const speed = (index + 1) * 0.05
+          particle.style.transform = `translateY(${scrolled * speed}px)`
+        }
+      })
+
+      parallaxFrame = null
+    })
   }
+}
 
-  particles.forEach((particle, index) => {
-    const speed = (index + 1) * 0.1
-    particle.style.transform = `translateY(${scrolled * speed}px)`
-  })
-})
+window.addEventListener("scroll", handleParallax, { passive: true })
 
-// Dynamic skill tag animations
-document.querySelectorAll(".skill-tag").forEach((tag, index) => {
-  tag.addEventListener("mouseenter", () => {
+// Dynamic skill tag animations with ripple effect
+document.querySelectorAll(".skill-tag").forEach((tag) => {
+  tag.addEventListener("mouseenter", (e) => {
+    // Remove existing ripples
+    const existingRipples = tag.querySelectorAll(".ripple")
+    existingRipples.forEach(ripple => ripple.remove())
+
     // Add ripple effect
     const ripple = document.createElement("span")
+    ripple.className = "ripple"
     ripple.style.position = "absolute"
     ripple.style.borderRadius = "50%"
     ripple.style.background = "rgba(59, 130, 246, 0.6)"
@@ -316,115 +283,96 @@ document.querySelectorAll(".skill-tag").forEach((tag, index) => {
     ripple.style.height = "20px"
     ripple.style.marginLeft = "-10px"
     ripple.style.marginTop = "-10px"
+    ripple.style.pointerEvents = "none"
 
+    tag.style.position = "relative"
     tag.appendChild(ripple)
 
     setTimeout(() => {
-      ripple.remove()
+      if (ripple.parentNode) {
+        ripple.remove()
+      }
     }, 600)
   })
 })
 
-// Add ripple animation CSS
-const rippleStyle = document.createElement("style")
-rippleStyle.textContent = `
-  @keyframes ripple {
-    to {
-      transform: scale(4);
-      opacity: 0;
+// Add ripple animation CSS if not exists
+if (!document.querySelector("#ripple-styles")) {
+  const rippleStyle = document.createElement("style")
+  rippleStyle.id = "ripple-styles"
+  rippleStyle.textContent = `
+    @keyframes ripple {
+      to {
+        transform: scale(4);
+        opacity: 0;
+      }
     }
-  }
-`
-document.head.appendChild(rippleStyle)
+  `
+  document.head.appendChild(rippleStyle)
+}
 
-// Enhanced contact method interactions
-document.querySelectorAll(".contact-method").forEach((method) => {
-  method.addEventListener("mouseenter", (e) => {
-    const rect = method.getBoundingClientRect()
-    const x = e.clientX - rect.left
-    const y = e.clientY - rect.top
-
-    const ripple = method.querySelector("::before")
-    method.style.setProperty("--x", x + "px")
-    method.style.setProperty("--y", y + "px")
-  })
-})
-
-// Smooth reveal animations for timeline items
+// Smooth reveal animations for timeline items - Fixed
 const timelineObserver = new IntersectionObserver(
   (entries) => {
-    entries.forEach((entry, index) => {
+    entries.forEach((entry) => {
       if (entry.isIntersecting) {
+        const items = Array.from(document.querySelectorAll(".timeline-item"))
+        const index = items.indexOf(entry.target)
+        
         setTimeout(() => {
           entry.target.style.opacity = "1"
           entry.target.style.transform = "translateX(0)"
-        }, index * 200)
+        }, index * 150)
+        
+        timelineObserver.unobserve(entry.target)
       }
     })
   },
-  { threshold: 0.3 },
+  { threshold: 0.2 }
 )
 
-document.querySelectorAll(".timeline-item").forEach((item, index) => {
-  item.style.opacity = "0"
-  item.style.transform = index % 2 === 0 ? "translateX(-50px)" : "translateX(50px)"
-  item.style.transition = "all 0.6s ease"
-  timelineObserver.observe(item)
+// Initialize timeline animations
+document.addEventListener("DOMContentLoaded", () => {
+  document.querySelectorAll(".timeline-item").forEach((item, index) => {
+    item.style.opacity = "0"
+    item.style.transform = index % 2 === 0 ? "translateX(-30px)" : "translateX(30px)"
+    item.style.transition = "all 0.6s ease"
+    timelineObserver.observe(item)
+  })
 })
 
-// Dynamic navbar background based on scroll position
-let lastScrollY = window.scrollY
-window.addEventListener("scroll", () => {
-  const currentScrollY = window.scrollY
-  const navbar = document.getElementById("navbar")
-
-  if (currentScrollY > lastScrollY && currentScrollY > 100) {
-    navbar.style.transform = "translateY(-100%)"
-  } else {
-    navbar.style.transform = "translateY(0)"
-  }
-
-  lastScrollY = currentScrollY
-})
-
-// Add floating animation to achievement badges
-document.querySelectorAll(".achievement-badge").forEach((badge, index) => {
-  badge.style.animation = `float 3s ease-in-out infinite ${index * 0.5}s`
-})
-
-// Enhanced mobile menu with slide animation
-const mobileMenuToggle = () => {
-  const navMenu = document.getElementById("nav-menu")
-  const hamburger = document.getElementById("hamburger")
-
-  navMenu.style.transition = "transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)"
-
-  if (navMenu.classList.contains("active")) {
-    navMenu.style.transform = "translateX(0)"
-  } else {
-    navMenu.style.transform = "translateX(-100%)"
-  }
+// Performance monitoring
+if ("performance" in window) {
+  window.addEventListener("load", () => {
+    setTimeout(() => {
+      const perfData = performance.getEntriesByType("navigation")[0]
+      if (perfData) {
+        console.log("Page load time:", perfData.loadEventEnd - perfData.loadEventStart, "ms")
+      }
+    }, 0)
+  })
 }
 
-// Performance optimized scroll handler
-let scrollTimeout
-window.addEventListener("scroll", () => {
-  if (scrollTimeout) {
-    clearTimeout(scrollTimeout)
-  }
-
-  scrollTimeout = setTimeout(() => {
-    updateScrollProgress()
-    updateActiveNavLink()
-  }, 10)
+// Enhanced loading animation
+window.addEventListener("load", () => {
+  document.body.style.opacity = "1"
+  document.body.classList.add("loaded")
 })
 
-// Add loading animation
-window.addEventListener("load", () => {
-  document.body.style.opacity = "0"
-  document.body.style.transition = "opacity 0.5s ease"
+// Error handling for external links
+document.querySelectorAll('a[target="_blank"]').forEach((link) => {
+  link.addEventListener("click", (e) => {
+    try {
+      console.log(`External link clicked: ${link.href}`)
+    } catch (error) {
+      console.error("Error tracking external link:", error)
+    }
+  })
+})
 
-  setTimeout(() => {
-    document.body.style.opacity = "1"
-  }, 100)
+// Cleanup function for better memory management
+window.addEventListener("beforeunload", () => {
+  // Cancel any pending animation frames
+  if (cardAnimationFrame) cancelAnimationFrame(cardAnimationFrame)
+  if (parallaxFrame) cancelAnimationFrame(parallaxFrame)
 })

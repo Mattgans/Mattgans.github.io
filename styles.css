@@ -140,13 +140,15 @@ body {
   transition: var(--transition);
 }
 
-/* Hero Section */
+/* Hero Section - FIXED */
 .hero {
-  min-height: 100vh;
+  height: 100vh; /* Changed from min-height to height */
   display: flex;
   align-items: center;
   background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
   padding-top: 4rem;
+  position: relative; /* Added to ensure proper stacking */
+  z-index: 1; /* Added to ensure proper stacking */
 }
 
 .hero-container {
@@ -230,6 +232,8 @@ body {
 /* Section Styles */
 section {
   padding: 5rem 0;
+  position: relative; /* Added to ensure proper stacking */
+  z-index: 2; /* Added to ensure sections appear above hero */
 }
 
 .section-title {
@@ -240,16 +244,28 @@ section {
   color: var(--text-primary);
 }
 
-/* About Section */
+/* About Section - FIXED positioning */
 .about {
   background-color: var(--bg-secondary);
+  padding: 5rem 0;
+  position: relative; /* Ensure proper positioning */
+  z-index: 2; /* Ensure it appears above hero */
+  margin-top: 0; /* Remove any negative margins */
 }
 
 .about-content {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 3rem;
+  gap: 4rem;
   align-items: start;
+}
+
+.about-text {
+  background: var(--bg-primary);
+  padding: 3rem;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-color);
 }
 
 .about-text p {
@@ -259,12 +275,23 @@ section {
   line-height: 1.7;
 }
 
+.about-text p:last-child {
+  margin-bottom: 0;
+}
+
 .education-card {
   background: var(--bg-primary);
-  padding: 2rem;
+  padding: 3rem;
   border-radius: var(--border-radius);
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-lg);
   border: 1px solid var(--border-color);
+  transform: translateY(0);
+  transition: var(--transition);
+}
+
+.education-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-xl);
 }
 
 .education-card h3 {
@@ -311,6 +338,11 @@ section {
 }
 
 /* Experience Section */
+.experience {
+  position: relative; /* Added for proper stacking */
+  z-index: 2; /* Added for proper stacking */
+}
+
 .timeline {
   position: relative;
   max-width: 800px;
@@ -395,6 +427,8 @@ section {
 /* Projects Section */
 .projects {
   background-color: var(--bg-secondary);
+  position: relative; /* Added for proper stacking */
+  z-index: 2; /* Added for proper stacking */
 }
 
 .projects-grid {
@@ -472,6 +506,11 @@ section {
 }
 
 /* Skills Section */
+.skills {
+  position: relative; /* Added for proper stacking */
+  z-index: 2; /* Added for proper stacking */
+}
+
 .skills-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -518,6 +557,8 @@ section {
 /* Contact Section */
 .contact {
   background-color: var(--bg-secondary);
+  position: relative; /* Added for proper stacking */
+  z-index: 2; /* Added for proper stacking */
 }
 
 .contact-content {
@@ -576,12 +617,15 @@ section {
   font-size: 0.875rem;
 }
 
-/* Footer */
+/* Footer - Black */
 .footer {
-  background-color: var(--text-primary);
-  color: var(--bg-primary);
+  background-color: #000000;
+  color: var(--text-primary);
   text-align: center;
   padding: 2rem 0;
+  border-top: 1px solid var(--border-color);
+  position: relative; /* Added for proper stacking */
+  z-index: 2; /* Added for proper stacking */
 }
 
 /* Responsive Design */
@@ -622,7 +666,12 @@ section {
 
   .about-content {
     grid-template-columns: 1fr;
-    gap: 2rem;
+    gap: 3rem;
+  }
+
+  .about-text,
+  .education-card {
+    padding: 2rem;
   }
 
   .hero-buttons {
@@ -679,8 +728,12 @@ section {
 
   .project-card,
   .skill-category,
-  .education-card,
   .timeline-content {
+    padding: 1.5rem;
+  }
+
+  .about-text,
+  .education-card {
     padding: 1.5rem;
   }
 
