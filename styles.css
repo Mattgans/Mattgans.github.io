@@ -24,3 +24,45 @@
 .panda-stage{left:50%;right:auto;transform:translateX(-50%)}
 .timeline-company{align-items:start;padding-top:2.5rem;padding-bottom:2.5rem}.timeline-company .experience-main h3{font-size:clamp(1.35rem,2vw,2rem);margin-bottom:1.25rem}.role-stack{display:grid;gap:.75rem;padding-left:1rem;border-left:1px solid rgba(96,165,250,.35)}.timeline-role{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:1.25rem;align-items:baseline}.timeline-role strong{font-size:.88rem;font-weight:600;line-height:1.4}.timeline-role span{color:#93c5fd;font:400 .61rem/1.4 var(--mono);white-space:nowrap}.timeline-company .timeline-meta{padding-top:.15rem}@media(max-width:800px){.timeline-role{grid-template-columns:1fr;gap:.2rem}.timeline-role span{white-space:normal}.timeline-company .timeline-meta{margin-top:.5rem}}
 .timeline-list{position:relative}.timeline-list:before{left:calc(20% - .55rem)}.timeline-item{grid-template-columns:minmax(160px,20%) 1fr minmax(210px,30%)}.timeline-item:after{left:calc(20% - .8rem)}.timeline-item .experience-number{padding:0 1.5rem 0 0;line-height:1.45;white-space:nowrap}@media(max-width:800px){.timeline-list:before{left:9px}.timeline-item{grid-template-columns:1fr;padding-left:1.8rem}.timeline-item:after{left:5px}.timeline-item .experience-number{padding:0;white-space:normal}}
+
+/* Project stacks: technical metadata, not UI controls. */
+.project-copy .tags{display:block;margin-top:1.8rem;font:400 .72rem/1.65 var(--mono);letter-spacing:.01em}
+.project-copy .tags:before{content:"SYSTEM STACK";display:block;margin-bottom:.24rem;color:currentColor;font-size:.55rem;letter-spacing:.12em;opacity:.65}
+.project-copy .tags span{display:inline;padding:0;border:0;border-radius:0;font:inherit;text-transform:none}
+.project-copy .tags span+span:before{content:" / ";padding:0 .24rem;opacity:.65}
+.project-copy .award{margin-top:1.7rem;padding-top:.75rem;border-top:1px solid rgba(21,32,29,.25);font-size:.59rem;letter-spacing:.06em}
+.project-secondary .award{border-color:rgba(248,250,252,.22)}
+
+/* Original project art, composed for the cards rather than lifted from screenshots. */
+.project-grid .project-card{min-height:600px;padding:1.35rem;justify-content:space-between}
+.project-grid .project-copy{width:min(100%,430px);padding:0;display:block}
+.project-grid .project-copy .tags{margin-top:1.6rem}
+.project-grid .project-copy .award{margin-top:1.25rem;padding-top:.7rem;border-top:1px solid rgba(248,250,252,.32)}
+.project-grid .inspector-visual{background-color:#07162f;background-image:url("project-ai-inspector-diagram.png");background-size:cover;background-position:center;}
+.project-grid .robot-visual{background-color:#061822;background-image:url("project-robotics-diagram.png");background-size:cover;background-position:center;}
+.project-grid .project-card:before{content:"";position:absolute;z-index:1;inset:0;pointer-events:none;background:linear-gradient(90deg,rgba(4,12,29,.92) 0%,rgba(4,12,29,.76) 42%,rgba(4,12,29,.18) 74%,transparent 100%)}
+.project-grid .project-copy{z-index:2;text-shadow:0 1px 12px rgba(2,6,23,.48)}
+.project-grid .project-secondary,.project-grid .project-secondary .project-copy,.project-grid .project-secondary .project-copy>p{color:#f8fafc}
+.project-grid .project-visual>p{z-index:2}
+.project-grid .equipment-shape,.project-grid .reticle,.project-grid .scan-line,.project-grid .robot-arm,.project-grid .robot-grid{display:none}
+.project-grid .project-visual>p{right:1.35rem;bottom:1.35rem;padding:.45rem .55rem;background:rgba(6,18,34,.72);color:#f8fafc}
+.project-grid .project-topline{width:100%}
+@media(max-width:800px){.project-grid .project-card{min-height:560px}.project-grid .project-copy{width:90%}.project-grid .inspector-visual{background-position:60% center}.project-grid .robot-visual{background-position:62% center}}
+
+/* Additional project diagrams share the same visual grammar. */
+.project-tertiary{color:#f8fafc;background:#111b37}
+.project-grid .credit-visual{background:#081a43 url("project-credit-diagram.png") center/cover no-repeat}
+.project-grid .stock-visual{background:#17123e url("project-stock-diagram.png") center/cover no-repeat}
+.project-grid .vr-visual{background:#160e35 url("project-hidden-foe-diagram.png") center/cover no-repeat}
+.project-link{position:relative;z-index:2;display:inline-block;margin-top:1.4rem;border-bottom:1px solid currentColor;padding-bottom:.3rem;font:500 .65rem var(--mono);letter-spacing:.05em;text-transform:uppercase;transition:.2s}.project-link:hover{color:#a5f3fc}
+
+/* Two flagship projects above, then an equal three-card project row. */
+@media(min-width:801px){.project-grid{grid-template-columns:repeat(12,minmax(0,1fr))}.project-feature{grid-column:span 7}.project-secondary{grid-column:span 5}.project-tertiary{grid-column:span 4}.project-tertiary .project-copy{width:100%}.project-tertiary .project-copy h3{font-size:clamp(1.75rem,2.35vw,2.75rem)}}
+
+/* Replace the manifesto quote with a concise scope index. */
+.about-index{margin-top:1.25rem;border-top:1px solid var(--line)}
+.about-index div{padding:.9rem 0;border-bottom:1px solid var(--line)}
+.about-index span{display:block;margin-bottom:.2rem;color:#60a5fa;font:.58rem var(--mono);letter-spacing:.08em}
+.about-index strong{display:block;font-size:.88rem;letter-spacing:-.025em}
+.about-index p{margin:.22rem 0 0;color:#94a3b8;font:.7rem/1.45 var(--mono)}
+@media(max-width:800px){.about-index{flex:1;margin-top:0}.about-index div{padding:.5rem 0}.about-index p{display:none}}
