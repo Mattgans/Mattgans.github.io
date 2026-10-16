@@ -1,0 +1,72 @@
+/* The game keeps the portfolio's navy, blue, and violet palette. */
+.hero { padding-top: 7rem; padding-bottom: 3rem; }
+.hero-layout { grid-template-columns: minmax(0, 1.1fr) minmax(340px, .9fr); gap: 4vw; align-items: center; }
+.hero-copy h1 { font-size: clamp(3.1rem, 6.7vw, 6.5rem); }
+.hero-copy h1 em { display: block; }
+.hero-side { display: grid; gap: .85rem; width: 100%; max-width: 460px; justify-self: end; min-width: 0; }
+.hero-current { display: flex; gap: .7rem; align-items: center; max-width: 550px; margin-top: 1.2rem; padding: .85rem 1rem; border: 1px solid #60a5fa33; border-radius: 7px; background: linear-gradient(110deg, #2563eb1f, #8b5cf60d); }
+.hero-current > span { flex: 0 0 6px; height: 6px; border-radius: 50%; background: #60a5fa; box-shadow: 0 0 10px #60a5fa44; }
+.hero-current p { margin: 0; color: #cbd5e1; font-size: .82rem; line-height: 1.6; }
+.hero-current a { color: #bfdbfe; font-weight: 600; white-space: nowrap; }
+.hero-current a:hover { text-decoration: underline; }
+.robot-game { padding: 1rem; color: #f8fafc; scroll-margin-top: 6rem; border: 1px solid rgba(148, 163, 184, .2); border-radius: 10px; background: linear-gradient(150deg, #1b2942, #121e33 80%); box-shadow: 0 24px 80px rgba(2, 6, 23, .3); }
+.robot-game .panel-topline { align-items: center; font-size: .55rem; letter-spacing: .06em; color: #94a3b8; }
+.robot-game-dot { display: inline-block; width: 6px; height: 6px; margin-right: .25rem; border-radius: 50%; background: #60a5fa; box-shadow: 0 0 10px #60a5fa66; }
+.robot-game-heading { margin: .85rem 0 .75rem; }
+.robot-game-heading h2 { font-size: clamp(1.55rem, 2.2vw, 1.85rem); letter-spacing: -.055em; }
+.robot-game-heading p { margin: .35rem 0 0; color: #aebed4; font-size: .75rem; line-height: 1.5; }
+.robot-game-controls { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .6rem; margin-top: .85rem; }
+.robot-game-controls[hidden] { display: none; }
+.robot-game .robot-game-controls button { display: grid; align-content: start; gap: .4rem; min-width: 0; padding: .7rem; text-align: left; border-color: #60a5fa66; background: #1e3556; color: #dbeafe; }
+.robot-game .robot-game-controls button:hover:enabled { border-color: #93c5fd; background: #254b7c; }
+.robot-game-controls strong { font: 500 .75rem var(--mono); }
+.robot-game-controls small { color: #b4c6e0; font: .55rem/1.5 var(--mono); }
+.robot-game[data-controls="keyboard"] canvas { cursor: default; }
+.robot-game-hud { display: flex; gap: 1rem; align-items: center; padding: .6rem 0; border-top: 1px solid #94a3b826; border-bottom: 1px solid #94a3b826; }
+.robot-game-hud > div { display: flex; align-items: baseline; gap: .4rem; }
+.robot-game-hud > div > span { color: #94a3b8; font: .52rem var(--mono); letter-spacing: .07em; }
+.robot-game-hud strong { font: 500 .85rem var(--mono); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.robot-game-range { margin-left: auto; max-width: 108px; text-align: right; color: #93c5fd; font: .51rem/1.5 var(--mono); letter-spacing: .04em; }
+.robot-game[data-in-range="true"] .robot-game-range { color: #6ee7b7; }
+.robot-game-stage { position: relative; height: 250px; margin: 0 -1rem; background: radial-gradient(ellipse at 50% 55%, #263d5c55, transparent 70%); }
+.robot-game-stage canvas { display: block; width: 100%; height: 100%; touch-action: none; cursor: crosshair; border-radius: 6px; }
+.robot-game-stage canvas:focus-visible { outline: 2px solid #93c5fd; outline-offset: -4px; }
+.robot-game-overlay { position: absolute; inset: 0; display: grid; place-items: center; padding: .75rem; text-align: center; pointer-events: none; background: #101b2f55; }
+.robot-game-dialog { width: min(100%, 350px); padding: .95rem; border: 1px solid #60a5fa44; border-radius: 8px; background: #101b2ff2; box-shadow: 0 12px 35px #02061766; }
+.robot-game-overlay button { pointer-events: auto; }
+.robot-game-overlay[hidden] { display: none; }
+.robot-game-overlay-title { margin: 0 0 .3rem; color: #f8fafc; font-weight: 700; font-size: 1.05rem; letter-spacing: -.035em; }
+.robot-game-overlay p:not(.robot-game-overlay-title) { color: #bac9df; font-size: .72rem; line-height: 1.5; margin: 0 0 .6rem; }
+.robot-game button { min-height: 44px; border: 1px solid transparent; border-radius: 5px; padding: .65rem 1rem; font: 500 .7rem var(--mono); cursor: pointer; transition: background .15s, border-color .15s; }
+.robot-game button:focus-visible { outline: 2px solid #dbeafe; outline-offset: 3px; }
+.robot-game button:disabled { cursor: default; opacity: .45; }
+.robot-game-grip { color: #eff6ff; background: #2563eb; box-shadow: 0 3px 14px #2563eb33; }
+.robot-game-grip:hover:enabled { background: #3b82f6; }
+.robot-game[data-in-range="true"] .robot-game-grip { background: #047857; color: #ecfdf5; }
+.robot-game[data-in-range="true"] .robot-game-grip:hover:enabled { background: #059669; }
+.robot-game-message { min-height: 2.9em; margin: .2rem 0 .5rem; color: #cbd5e1; font-size: .72rem; line-height: 1.45; }
+.robot-game-actions { display: flex; gap: .65rem; }
+.robot-game-grip { flex: 1; }
+.robot-game .robot-game-reset { border-color: #94a3b833; background: transparent; color: #cbd5e1; }
+.robot-game-reset:hover:enabled { background: #334155; border-color: #64748b; }
+.robot-game-reset span { padding-left: .3rem; font-size: .95rem; }
+.robot-game-help { margin: .6rem 0; color: #94a3b8; font: .55rem/1.65 var(--mono); }
+.robot-game-help span { color: #64748b; margin: 0 .15rem; }
+.robot-game-footer { display: flex; justify-content: space-between; gap: .5rem; color: #93a6c1; font: .5rem/1.5 var(--mono); letter-spacing: .025em; }
+.robot-game[data-state="won"] .robot-game-dot { background: #6ee7b7; box-shadow: 0 0 10px #6ee7b766; }
+.robot-game[data-state="unavailable"] canvas { visibility: hidden; }
+@media (max-width: 950px) {
+  .hero-layout { grid-template-columns: 1fr; gap: 2rem; }
+  .hero-side { justify-self: center; }
+  .hero-panel.robot-game { width: 100%; margin: 0; }
+}
+@media (max-width: 420px) {
+  .robot-game-stage { height: 230px; }
+  .robot-game-hud > div { display: grid; gap: .2rem; }
+  .robot-game .panel-topline { font-size: .49rem; }
+  .robot-game-footer { font-size: .45rem; }
+}
+@media (min-width: 951px) and (max-height: 820px) {
+  .hero { padding-top: 6rem; padding-bottom: 2rem; }
+  .robot-game-stage { height: 210px; }
+}
