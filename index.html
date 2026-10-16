@@ -5,7 +5,7 @@
   <meta name="description" content="Matthew Shang — AI engineer, software builder, and computer science graduate student."><title>Matthew Shang — AI Engineer</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet"><link rel="stylesheet" href="styles.css">
-  <link rel="stylesheet" href="robot-game.css">
+  <link rel="stylesheet" href="robot-game.css?v=manual-lift-1">
 </head>
 <body>
 <div class="noise" aria-hidden="true"></div><div class="cursor-glow" aria-hidden="true"></div><div class="scroll-progress" id="scroll-progress"></div>
@@ -19,8 +19,8 @@
     <div class="hero-side">
     <aside class="hero-panel robot-game" id="robot-game" aria-labelledby="robot-game-title" data-state="ready">
       <div class="panel-topline"><span><span class="robot-game-dot" aria-hidden="true"></span> ROBOT LAB / 01</span><span>YOU'RE THE OPERATOR</span></div>
-      <div class="robot-game-heading"><h2 id="robot-game-title">Pick. Place. Repeat.</h2><p>A little robotics break. Deliver three cubes to the green pad.</p></div>
-      <div class="robot-game-hud"><div><span>DELIVERED</span><strong data-game-score>0 / 3</strong></div><div><span>RUN TIME</span><strong data-game-time>0.0s</strong></div><span class="robot-game-range" data-game-range>STANDBY</span></div>
+      <div class="robot-game-heading"><h2 id="robot-game-title">Pick. Place. Repeat.</h2><p data-game-objective>Three deliveries, then a three-box stacking challenge.</p></div>
+      <div class="robot-game-hud"><div><span>LEVEL</span><strong data-game-score>1 / 4</strong></div><div><span>RUN TIME</span><strong data-game-time>0.0s</strong></div><span class="robot-game-range" data-game-range>STANDBY</span></div>
       <div class="robot-game-stage">
         <canvas tabindex="0" role="group" aria-label="Robotic arm game board" aria-describedby="robot-game-help robot-game-message"></canvas>
         <div class="robot-game-overlay">
@@ -28,16 +28,21 @@
             <p class="robot-game-overlay-title" id="robot-controls-title" data-game-overlay-title>Choose your controls.</p>
             <p id="robot-controls-copy" data-game-overlay-copy>Pick how to play. Your run starts when you choose.</p>
             <div class="robot-game-controls">
-              <button type="button" data-game-control="mouse" disabled><strong>Mouse</strong><small>Follow cursor · Space to grab</small></button>
-              <button type="button" data-game-control="keyboard" disabled><strong>Keyboard</strong><small>Arrows / WASD · Space to grab</small></button>
+              <button type="button" data-game-control="mouse" disabled><strong>Mouse</strong><small>Aim with cursor<br>Wheel: height · Space: grip</small></button>
+              <button type="button" data-game-control="keyboard" disabled><strong>Keyboard</strong><small>Arrows / WASD: aim<br>Q/E: height · Space: grip</small></button>
             </div>
           </div>
         </div>
       </div>
       <p class="robot-game-message" id="robot-game-message" data-game-message role="status" aria-live="polite">Choose Mouse or Keyboard on the board to start. There’s no time limit.</p>
+      <div class="robot-game-height-controls">
+        <button type="button" data-game-lift="1" disabled aria-label="Lift gripper; hold to keep lifting">Lift ↑</button>
+        <div class="robot-game-height-readout"><span>HEIGHT <output data-game-height>46%</output></span><progress data-game-height-meter max="100" value="46" aria-label="Gripper height"></progress></div>
+        <button type="button" data-game-lift="-1" disabled aria-label="Lower gripper; hold to keep lowering">Lower ↓</button>
+      </div>
       <div class="robot-game-actions"><button class="robot-game-grip" type="button" data-game-grip disabled>Grab cargo</button><button class="robot-game-reset" type="button" data-game-reset disabled aria-label="Restart and choose controls">Restart <span aria-hidden="true">↺</span></button></div>
       <p class="robot-game-help" id="robot-game-help">Choose your controls to begin.</p>
-      <div class="robot-game-footer"><span data-game-best>3 DELIVERIES / NO TIME LIMIT</span><span>BUILT WITH THREE.JS</span></div>
+      <div class="robot-game-footer"><span data-game-best>4 LEVELS / NO TIME LIMIT</span><span>BUILT WITH THREE.JS</span></div>
       <noscript><p>Enable JavaScript to play the robot game.</p></noscript>
     </aside></div></div>
   </section>
@@ -54,4 +59,4 @@
   </div></section>
   <section class="section-shell about-section" id="about" aria-labelledby="about-title"><div class="about-aside reveal"><p class="eyebrow">A little context</p><p class="large-quote">“The most interesting problems live between disciplines.”</p></div><div class="about-content reveal"><h2 id="about-title">I combine the rigor of research with the instinct to ship.</h2><p>My work moves comfortably from applied machine learning and full-stack product engineering to embodied interfaces. I care about systems that are reliable, legible, and genuinely useful to the people working with them.</p><div class="education"><div><span>Now studying</span><strong>Master of Computer Science</strong><p>University of Illinois Urbana-Champaign<br>Spring 2026 — Spring 2027 · GPA 4.0</p></div><div><span>Foundation</span><strong>BS, Computer Science &amp; Statistics</strong><p>UIUC · Magna Cum Laude, Highest Distinction<br>Fall 2023 — Dec 2025 · GPA 3.97</p></div></div></div></section>
   <section class="contact-section section-shell" id="contact"><p class="eyebrow reveal">Have a difficult problem?</p><h2 class="reveal">Let's make something<br><em>useful.</em></h2><div class="contact-links reveal"><a href="mailto:Mshang4@illinois.edu">Mshang4@illinois.edu <span>↗</span></a><a href="https://linkedin.com/in/shangmatthew" target="_blank" rel="noopener">LinkedIn <span>↗</span></a></div></section>
-</main><footer><span>© 2026 Matthew Shang</span><span>Designed &amp; built with intent.</span></footer><script type="module" src="script.js?v=robotic-cleaning-2"></script><script type="module" src="robot-game.js"></script></body></html>
+</main><footer><span>© 2026 Matthew Shang</span><span>Designed &amp; built with intent.</span></footer><script type="module" src="script.js?v=robotic-cleaning-2"></script><script type="module" src="robot-game.js?v=reset-motion-1"></script></body></html>

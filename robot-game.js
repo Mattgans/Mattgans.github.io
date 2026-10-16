@@ -1,4 +1,4 @@
-import { RobotGame, solveArm, DELIVERY_COUNT } from './robot-game-logic.mjs';
+import { RobotGame, solveArm, LEVEL_COUNT, STACK_COUNT, CARGO_SIZE, HEIGHT } from './robot-game-logic.mjs?v=reset-motion-1';
 
 const root = document.getElementById('robot-game');
 const stage = root.querySelector('.robot-game-stage');
@@ -6,8 +6,12 @@ const canvas = root.querySelector('canvas');
 const overlay = root.querySelector('.robot-game-overlay');
 const gripButton = root.querySelector('[data-game-grip]');
 const resetButton = root.querySelector('[data-game-reset]');
+const liftButtons = root.querySelectorAll('[data-game-lift]');
+const heightText = root.querySelector('[data-game-height]');
+const heightMeter = root.querySelector('[data-game-height-meter]');
 const message = root.querySelector('[data-game-message]');
 const score = root.querySelector('[data-game-score]');
+const objective = root.querySelector('[data-game-objective]');
 const timer = root.querySelector('[data-game-time]');
 const range = root.querySelector('[data-game-range]');
 const bestLabel = root.querySelector('[data-game-best]');
@@ -16,12 +20,12 @@ const controlButtons = controlPicker.querySelectorAll('[data-game-control]');
 const help = root.querySelector('.robot-game-help');
 const controlModes = {
   mouse: {
-    running: 'Move the mouse to the blue cube. Grab it, then carry it to the green pad.',
-    help: 'Move mouse or tap / drag to aim · Space or the button to grab / release',
+    running: 'Aim over the blue cube, lower the gripper, then grab. Lift before moving.',
+    help: 'Mouse / drag: aim · Wheel or Q/E: lift / lower · Space: open / close',
   },
   keyboard: {
-    running: 'Use arrows or WASD to reach the blue cube. Press Space to grab it.',
-    help: 'Focus the board · Arrows / WASD to move · Space / Enter to grab / release',
+    running: 'Use arrows / WASD to aim, E to lower, and Space to grab. Q lifts the cargo.',
+    help: 'Arrows / WASD: aim · Q: lift · E: lower · Space / Enter: open / close',
   },
 };
 let controlMode = 'mouse';
@@ -31,19 +35,20 @@ function showControlInstructions() {
   if (game.phase === 'ready') {
     message.textContent = 'Choose Mouse or Keyboard on the board to start. There’s no time limit.';
   } else if (game.phase === 'playing') {
-    message.textContent = game.held ? 'Carry the cube to the green pad, then release it.' : controlModes[controlMode].running;
+    message.textContent = controlModes[controlMode].running;
   }
 }
 const game = new RobotGame();
 const keys = new Set();
-const motionPreference = matchMedia('(prefers-reduced-motion: reduce)');
+const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+let liftInput = 0;
 let best = null;
 try {
-  const saved = Number(localStorage.getItem('robot-lab-best-v1'));
+  const saved = Number(localStorage.getItem('robot-lab-best-stack-v3'));
   if (Number.isFinite(saved) && saved > 0) best = saved;
 } catch { /* Private browsing may disable storage. */ }
 const formatTime = value => `${value.toFixed(1)}s`;
-bestLabel.textContent = best ? `BEST ${formatTime(best)}` : '3 DELIVERIES / NO TIME LIMIT';
+bestLabel.textContent = best ? `BEST ${formatTime(best)}` : '4 LEVELS / NO TIME LIMIT';
 
 function unavailable() {
   root.dataset.state = 'unavailable';
@@ -53,6 +58,7 @@ function unavailable() {
   controlPicker.hidden = true;
   gripButton.disabled = true;
   resetButton.disabled = true;
+  liftButtons.forEach(button => { button.disabled = true; });
   controlButtons.forEach(button => { button.disabled = true; });
   range.textContent = 'OFFLINE';
   message.textContent = 'You can still explore all of my work below.';
@@ -121,10 +127,37 @@ async function init() {
     tip.position.set(0, -0.16, 0);
     return finger;
   });
-  const cargo = mesh(new THREE.BoxGeometry(0.48, 0.48, 0.48), blue);
+  const cargoMaterial = blue.clone();
+  cargoMaterial.transparent = true;
+  const cargo = mesh(new THREE.BoxGeometry(CARGO_SIZE, CARGO_SIZE, CARGO_SIZE), cargoMaterial);
   const cargoEdges = new THREE.LineSegments(
     new THREE.EdgesGeometry(cargo.geometry), new THREE.LineBasicMaterial({ color: 0xdbeafe }));
   cargo.add(cargoEdges);
+  cargoEdges.material.transparent = true;
+  const outgoingMaterial = cargoMaterial.clone();
+  outgoingMaterial.depthWrite = false;
+  const outgoingCargo = mesh(cargo.geometry, outgoingMaterial);
+  outgoingCargo.visible = false;
+  const outgoingEdges = new THREE.LineSegments(cargoEdges.geometry,
+    new THREE.LineBasicMaterial({ color: 0xdbeafe, transparent: true }));
+  outgoingCargo.add(outgoingEdges);
+  const contactMaterial = new THREE.MeshBasicMaterial({ color: 0x6ee7b7, transparent: true, opacity: 0, depthWrite: false });
+  const contactRing = mesh(new THREE.TorusGeometry(0.3, 0.02, 8, 48), contactMaterial);
+  contactRing.rotation.x = -Math.PI / 2;
+  contactRing.castShadow = false;
+  contactRing.receiveShadow = false;
+  contactRing.visible = false;
+  const stackMaterial = material(0x3b82f6, { roughness: 0.5, metalness: 0.2 });
+  const stackedCargo = Array.from({ length: STACK_COUNT }, () => {
+    const box = mesh(cargo.geometry, stackMaterial);
+    box.add(new THREE.LineSegments(cargoEdges.geometry, new THREE.LineBasicMaterial({ color: 0x6ee7b7 })));
+    box.visible = false;
+    return box;
+  });
+  const stackOutline = mesh(new THREE.BoxGeometry(CARGO_SIZE + 0.02, CARGO_SIZE + 0.02, CARGO_SIZE + 0.02),
+    new THREE.MeshBasicMaterial({ color: 0x6ee7b7, wireframe: true, transparent: true, opacity: 0.65, depthWrite: false }));
+  stackOutline.castShadow = false;
+  stackOutline.receiveShadow = false;
   const target = new THREE.Group();
   scene.add(target);
   const targetDisk = mesh(new THREE.CylinderGeometry(1, 1, 0.025, 48),
@@ -161,36 +194,95 @@ async function init() {
   }
   const cargoLabel = label('CARGO', '#93c5fd');
   const targetLabel = label('DROP ZONE', '#6ee7b7');
+  const stackLabel = label('STACK HERE', '#6ee7b7');
   const up = new THREE.Vector3(0, 1, 0);
   const from = new THREE.Vector3(), to = new THREE.Vector3(), difference = new THREE.Vector3();
-  let wristHeight = 0.92;
-  let cargoHeight = 0.27;
-  let round = 0;
   let visible = true;
   let previousTime = 0;
   let frame = null;
   let lastRange = '';
+  let feedback = null;
+  let releasePending = false;
+  let fingerSpread = 0.38;
+  const desiredSpread = () => game.closed ? (game.held ? 0.27 : 0.12) : 0.38;
+  const visualMotionActive = () => feedback !== null || Math.abs(fingerSpread - desiredSpread()) > 0.0005;
+
+  function clearFeedback() {
+    feedback = null;
+    fingerSpread = desiredSpread();
+    contactRing.visible = false;
+    outgoingCargo.visible = false;
+    gripper.rotation.z = 0;
+    cargo.scale.setScalar(1);
+    cargoMaterial.opacity = 1;
+    cargoMaterial.emissiveIntensity = 0.3;
+    cargoEdges.material.opacity = 1;
+  }
+
+  function playFeedback(result, origin) {
+    const success = ['delivered', 'level-four', 'stacked', 'won'].includes(result);
+    const landed = success || result === 'missed' || result === 'misaligned';
+    const dropped = result === 'released' || landed;
+    // Landing feedback must not restart a return the player already interrupted.
+    if (dropped && !(landed && releasePending) && !reducedMotion.matches) game.retractHand();
+    if (result === 'released') releasePending = true;
+    else if (landed || result === 'grabbed') releasePending = false;
+    if (reducedMotion.matches) { clearFeedback(); return; }
+    const spawning = ['delivered', 'level-four', 'stacked'].includes(result);
+    feedback = {
+      kind: success ? 'placed' : result === 'grabbed' ? 'grabbed' : 'gripper',
+      elapsed: 0,
+      duration: success ? 0.6 : 0.28,
+      origin: { ...origin },
+      spawning,
+      outgoing: result === 'delivered' || result === 'level-four',
+    };
+    contactMaterial.color.set(success ? 0x6ee7b7 : result === 'too-far' ? 0xfbbf24 : 0x60a5fa);
+  }
+
+  function advanceFeedback(dt) {
+    if (reducedMotion.matches) { clearFeedback(); return; }
+    const targetSpread = desiredSpread();
+    fingerSpread += (targetSpread - fingerSpread) * (1 - Math.exp(-22 * dt));
+    if (Math.abs(fingerSpread - targetSpread) < 0.0005) fingerSpread = targetSpread;
+    if (feedback) {
+      feedback.elapsed += dt;
+      if (feedback.elapsed >= feedback.duration) feedback = null;
+    }
+  }
 
   function updateHUD() {
     root.dataset.state = game.phase;
-    score.textContent = `${game.delivered} / ${DELIVERY_COUNT}`;
+    score.textContent = `${game.level} / ${LEVEL_COUNT}`;
+    const objectiveText = game.phase === 'won' ? 'All four levels complete · Three boxes stacked.'
+      : game.phase === 'ready' ? 'Three deliveries, then a three-box stacking challenge.'
+      : game.stacking ? `Level 4 · Stack ${game.stacked.length} / ${STACK_COUNT} boxes on the outline.`
+        : `Level ${game.level} · Deliver the cube to the green pad.`;
+    if (objective.textContent !== objectiveText) objective.textContent = objectiveText;
     timer.textContent = formatTime(game.elapsed);
     gripButton.disabled = game.phase !== 'playing';
-    gripButton.textContent = game.held ? 'Release cargo' : 'Grab cargo';
-    const rangeText = game.phase !== 'playing' ? 'STANDBY'
-      : game.inRange ? (game.held ? 'READY TO DROP' : 'READY TO GRAB')
-        : (game.held ? 'FIND THE GREEN PAD' : 'FIND THE BLUE CUBE');
+    gripButton.textContent = game.held ? 'Release cargo' : game.closed ? 'Open gripper' : 'Grab cargo';
+    liftButtons.forEach(button => { button.disabled = game.phase !== 'playing'; });
+    const heightPercent = Math.round((game.hand.y - HEIGHT.min) / (HEIGHT.max - HEIGHT.min) * 100);
+    heightText.textContent = `${heightPercent}%`;
+    heightMeter.value = heightPercent;
+    root.dataset.motion = game.retracting ? 'resetting' : feedback?.kind ?? 'idle';
+    const rangeText = game.retracting ? 'RESETTING ARM' : game.phase === 'won' ? 'COMPLETE' : game.phase !== 'playing' ? 'STANDBY'
+      : game.held ? (game.movementBlocked ? (game.stacking ? 'LIFT ABOVE STACK' : 'LIFT TO CARRY')
+        : game.overTarget ? (!game.aligned ? 'ALIGN WITH OUTLINE'
+          : game.inRange ? (game.stacking ? 'READY TO STACK' : 'READY TO DROP') : 'LOWER TO PLACE')
+          : 'FIND THE GREEN PAD')
+        : game.closed ? 'OPEN GRIPPER'
+          : game.inRange ? 'READY TO GRAB' : game.nearCargo ? 'LOWER TO GRAB' : 'FIND THE BLUE CUBE';
     if (rangeText !== lastRange) {
       range.textContent = rangeText;
-      root.dataset.inRange = String(game.inRange && game.phase === 'playing');
+      root.dataset.inRange = String(game.inRange && (game.held || !game.closed) && game.phase === 'playing');
       lastRange = rangeText;
     }
   }
 
-  function draw(dt = 0) {
-    const snap = motionPreference.matches || dt === 0;
-    const mix = snap ? 1 : 1 - Math.exp(-12 * dt);
-    wristHeight += ((game.held ? 1.75 : 0.92) - wristHeight) * mix;
+  function draw() {
+    const wristHeight = game.hand.y;
     const points = solveArm(game.hand, wristHeight);
     const positions = [points.base, points.elbow, points.wrist];
     positions.forEach((point, index) => {
@@ -208,18 +300,58 @@ async function init() {
       linkStripes[index].quaternion.copy(link.quaternion);
     });
     gripper.position.copy(joints[2].position);
-    const spread = game.held ? 0.27 : 0.38;
+    const spread = fingerSpread;
     fingers[0].position.x = -spread;
     fingers[1].position.x = spread;
-    if (round !== game.delivered) { cargoHeight = 0.27; round = game.delivered; }
-    cargoHeight += ((game.held ? wristHeight - 0.57 : 0.27) - cargoHeight) * mix;
-    cargo.position.set(game.cargo.x, cargoHeight, game.cargo.z);
+    cargo.position.set(game.cargo.x, game.cargo.y, game.cargo.z);
+    contactRing.visible = Boolean(feedback);
+    outgoingCargo.visible = Boolean(feedback?.outgoing);
+    gripper.rotation.z = 0;
+    cargoMaterial.opacity = 1;
+    cargoEdges.material.opacity = 1;
+    cargoMaterial.emissiveIntensity = 0.3;
+    cargo.scale.setScalar(1);
+    if (feedback) {
+      const t = Math.min(1, feedback.elapsed / feedback.duration);
+      const pulse = Math.sin(Math.PI * t);
+      contactRing.position.set(feedback.origin.x, feedback.origin.y - CARGO_SIZE / 2 + 0.015, feedback.origin.z);
+      contactRing.scale.setScalar(1 + t * 1.8);
+      contactMaterial.opacity = (1 - t) * 0.8;
+      if (feedback.kind === 'grabbed') {
+        gripper.rotation.z = Math.sin(t * Math.PI * 2) * (1 - t) * 0.045;
+        cargoMaterial.emissiveIntensity = 0.3 + pulse * 0.7;
+      }
+      if (feedback.spawning) {
+        const spawn = Math.min(1, Math.max(0, (t - 0.12) / 0.65));
+        const eased = 1 - (1 - spawn) ** 3;
+        cargoMaterial.opacity = eased;
+        cargoEdges.material.opacity = eased;
+        cargo.scale.setScalar(0.75 + eased * 0.25);
+      }
+      if (feedback.outgoing) {
+        outgoingCargo.position.set(feedback.origin.x, feedback.origin.y + t * 0.06, feedback.origin.z);
+        outgoingCargo.scale.setScalar(1 + pulse * 0.04);
+        outgoingMaterial.opacity = Math.max(0, 1 - Math.max(0, t - 0.25) / 0.75);
+        outgoingEdges.material.opacity = outgoingMaterial.opacity;
+      }
+    }
     cargo.visible = game.phase !== 'won';
+    stackedCargo.forEach((box, index) => {
+      const placed = game.stacked[index];
+      box.visible = Boolean(placed);
+      if (placed) box.position.set(placed.x, placed.y, placed.z);
+    });
+    stackOutline.visible = game.stacking && game.phase !== 'won';
+    stackOutline.position.set(game.target.x, game.placementHeight, game.target.z);
     cargoLabel.visible = game.phase !== 'won' && !game.held;
+    cargoLabel.material.opacity = cargoMaterial.opacity;
     cargoLabel.position.set(game.cargo.x, 0.2, game.cargo.z + 0.52);
     target.position.set(game.target.x, 0, game.target.z);
     target.scale.setScalar(game.targetRadius);
     targetLabel.position.set(game.target.x, 0.15, game.target.z + game.targetRadius + 0.25);
+    targetLabel.visible = !game.stacking;
+    stackLabel.visible = game.stacking && game.phase !== 'won';
+    stackLabel.position.copy(targetLabel.position);
     cursor.position.set(game.hand.x, 0.065, game.hand.z);
     cursorMaterial.color.set(game.inRange ? 0x6ee7b7 : 0x93c5fd);
     const pointsArray = guide.geometry.attributes.position;
@@ -238,22 +370,29 @@ async function init() {
       const direction = {
         x: Number(keys.has('ArrowRight') || keys.has('d')) - Number(keys.has('ArrowLeft') || keys.has('a')),
         z: Number(keys.has('ArrowDown') || keys.has('s')) - Number(keys.has('ArrowUp') || keys.has('w')),
+        y: Math.max(-1, Math.min(1, liftInput + Number(keys.has('q')) - Number(keys.has('e')))),
       };
-      game.update(dt, direction);
+      const landing = { x: game.cargo.x, y: game.landingHeight(game.cargo), z: game.cargo.z };
+      const result = game.update(dt, direction);
+      if (result) handleResult(result, landing);
+      advanceFeedback(Math.min(dt, 0.05));
       updateHUD();
-      draw(Math.min(dt, 0.05));
-      if (game.phase === 'playing' || keys.size > 0 || Math.hypot(game.hand.x - game.aim.x, game.hand.z - game.aim.z) > 0.001) {
+      draw();
+      if (frame === null && (game.retracting || visualMotionActive()
+        || (game.phase !== 'won' && (game.phase === 'playing' || keys.size > 0 || Math.hypot(game.hand.x - game.aim.x, game.hand.z - game.aim.z) > 0.001)))) {
         frame = requestAnimationFrame(tick);
       }
     }
   }
   function resume() {
-    if (frame !== null || !visible || document.hidden || game.phase === 'won' || root.dataset.state === 'unavailable') return;
+    if (frame !== null || !visible || document.hidden || root.dataset.state === 'unavailable'
+      || (game.phase === 'won' && !game.retracting && !visualMotionActive())) return;
     previousTime = performance.now();
     frame = requestAnimationFrame(tick);
   }
   function pause() {
     keys.clear();
+    liftInput = 0;
     if (frame !== null) cancelAnimationFrame(frame);
     frame = null;
   }
@@ -261,8 +400,8 @@ async function init() {
   function start() {
     pause();
     game.start();
-    round = 0;
-    wristHeight = 0.92; cargoHeight = 0.27;
+    releasePending = false;
+    clearFeedback();
     overlay.hidden = true;
     showControlInstructions();
     canvas.focus({ preventScroll: true });
@@ -271,8 +410,8 @@ async function init() {
   function chooseControls() {
     pause();
     game.reset();
-    round = 0;
-    wristHeight = 0.92; cargoHeight = 0.27;
+    releasePending = false;
+    clearFeedback();
     root.querySelector('[data-game-overlay-title]').textContent = 'Choose your controls.';
     root.querySelector('[data-game-overlay-copy]').textContent = 'Pick how to play. Your run starts when you choose.';
     overlay.hidden = false;
@@ -280,31 +419,40 @@ async function init() {
     updateHUD(); draw();
     controlPicker.querySelector(`[data-game-control="${controlMode}"]`).focus({ preventScroll: true });
   }
-  function grip() {
-    const result = game.grip();
+  function handleResult(result, origin) {
+    if (!result || result === 'inactive') return;
+    playFeedback(result, origin);
     const messages = {
-      'too-far': 'A little closer! Move the ring under the blue cube, then grab.',
-      grabbed: 'Got it! Move to the green pad, then release.',
-      missed: 'Missed the pad. Grab the cube again and give it another go.',
-      delivered: `${game.delivered} down. The next pad is a little smaller.`,
+      'too-far': 'Empty grip. Open it again, aim over the cube, and lower before grabbing.',
+      opened: 'Gripper open. Aim over the blue cube and lower to grab it.',
+      grabbed: 'Got it! Lift with Q or Lift, then carry it to the green pad.',
+      released: 'Cargo released. Let it land on the green pad.',
+      missed: 'Missed the pad. Lower the open gripper to pick the cube up again.',
+      delivered: `${game.delivered} down. Find the next cube, lower, and grab.`,
+      'level-four': 'Level 4 unlocked! Stack three boxes. Place each one inside the green outline.',
+      stacked: `${game.stacked.length} / 3 stacked! Lift the next box above the tower, align, then lower and release.`,
+      misaligned: 'Off-center. Pick the box up again and align it with the green outline.',
     };
     if (messages[result]) message.textContent = messages[result];
     if (result === 'won') {
       const record = best === null || game.elapsed < best;
       if (record) {
         best = game.elapsed;
-        try { localStorage.setItem('robot-lab-best-v1', String(best)); } catch { /* Optional persistence. */ }
+        try { localStorage.setItem('robot-lab-best-stack-v3', String(best)); } catch { /* Optional persistence. */ }
       }
       bestLabel.textContent = `BEST ${formatTime(best)}`;
-      root.querySelector('[data-game-overlay-title]').textContent = record ? 'Personal best. Nicely placed.' : 'All cargo delivered.';
-      root.querySelector('[data-game-overlay-copy]').textContent = `Three deliveries in ${formatTime(game.elapsed)}. Choose controls to play again.`;
-      overlay.hidden = false;
-      message.textContent = `Complete! Three deliveries in ${formatTime(game.elapsed)}.`;
+      // Keep the completed tower visible; Restart reopens the control chooser.
+      overlay.hidden = true;
+      message.textContent = `${record ? 'New best! ' : ''}Four levels complete in ${formatTime(game.elapsed)}. Three boxes stacked!`;
       pause();
-      controlPicker.querySelector(`[data-game-control="${controlMode}"]`).focus({ preventScroll: true });
+      resetButton.focus({ preventScroll: true });
     }
-    updateHUD();
-    draw(1 / 60);
+  }
+  function grip() {
+    const origin = { x: game.hand.x, y: game.held ? game.landingHeight(game.cargo)
+      : Math.max(0.27, game.hand.y - 0.57), z: game.hand.z };
+    handleResult(game.grip(), origin);
+    updateHUD(); draw(); resume();
   }
   gripButton.addEventListener('click', grip);
   resetButton.addEventListener('click', chooseControls);
@@ -312,6 +460,26 @@ async function init() {
     controlMode = button.dataset.gameControl;
     start();
   }));
+  function nudgeHeight(direction) {
+    game.adjustHeight(direction * 0.18);
+    updateHUD(); draw(); resume();
+  }
+  liftButtons.forEach(button => {
+    const direction = Number(button.dataset.gameLift);
+    button.addEventListener('pointerdown', event => {
+      if (game.phase !== 'playing' || event.button !== 0 || !event.isPrimary) return;
+      event.preventDefault();
+      button.setPointerCapture(event.pointerId);
+      nudgeHeight(direction);
+      liftInput = direction;
+    });
+    const release = () => { liftInput = 0; };
+    button.addEventListener('pointerup', release);
+    button.addEventListener('pointercancel', release);
+    button.addEventListener('lostpointercapture', release);
+    // Native keyboard activation emits a click without a pointerdown.
+    button.addEventListener('click', event => { if (event.detail === 0) nudgeHeight(direction); });
+  });
 
   const raycaster = new THREE.Raycaster();
   const pointer = new THREE.Vector2();
@@ -342,8 +510,19 @@ async function init() {
   canvas.addEventListener('pointerup', event => {
     if (canvas.hasPointerCapture(event.pointerId)) canvas.releasePointerCapture(event.pointerId);
   });
+  canvas.addEventListener('wheel', event => {
+    if (game.phase !== 'playing' || controlMode !== 'mouse' || event.deltaY === 0) return;
+    event.preventDefault();
+    game.adjustHeight(-Math.sign(event.deltaY) * 0.13);
+    updateHUD(); draw(); resume();
+  }, { passive: false });
   canvas.addEventListener('keydown', event => {
     const key = event.key.length === 1 ? event.key.toLowerCase() : event.key;
+    if (key === 'q' || key === 'e') {
+      event.preventDefault();
+      keys.add(key);
+      resume();
+    }
     if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'w', 'a', 's', 'd'].includes(key)) {
       if (controlMode !== 'keyboard') return;
       event.preventDefault();
@@ -356,7 +535,7 @@ async function init() {
   // Clear keys even when focus moves from the canvas to an action button.
   window.addEventListener('keyup', event => keys.delete(event.key.length === 1 ? event.key.toLowerCase() : event.key));
   canvas.addEventListener('blur', () => keys.clear());
-  window.addEventListener('blur', () => keys.clear());
+  window.addEventListener('blur', () => { keys.clear(); liftInput = 0; });
   document.addEventListener('visibilitychange', () => document.hidden ? pause() : resume());
   const visibility = new IntersectionObserver(entries => {
     visible = entries[0].isIntersecting;
@@ -383,7 +562,10 @@ async function init() {
     unavailable();
   });
   canvas.addEventListener('webglcontextrestored', () => location.reload());
-  motionPreference.addEventListener('change', () => draw());
+  reducedMotion.addEventListener('change', () => {
+    if (reducedMotion.matches) { game.cancelRetraction(); clearFeedback(); }
+    updateHUD(); draw(); resume();
+  });
   resetButton.disabled = false;
   controlButtons.forEach(button => { button.disabled = false; });
   root.dataset.loaded = 'true';
